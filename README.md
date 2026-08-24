@@ -2,7 +2,7 @@
 
 ## Submission status
 
-Hosted application: https://last-mile-delivery-2lvp6f2h0-aryan-mishras-projects-ea501e54.vercel.app
+Hosted application: https://last-mile-delivery-rdesvdypb-aryan-mishras-projects-ea501e54.vercel.app
 
 The Last-Mile Delivery Tracker is a complete delivery operations platform for customer order placement, intelligent pricing, agent dispatch, delivery lifecycle management, and proactive customer communication. The product workspace showcases customer order creation, volumetric and COD pricing, delivery summaries, and operations monitoring. The repository includes the complete FastAPI service, SQLite data layer, role-based security, assignment engine, immutable tracking model, and email/SMS integrations.
 
