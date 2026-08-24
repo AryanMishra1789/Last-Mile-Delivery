@@ -2,7 +2,7 @@
 
 ## Submission status
 
-Hosted static demo: https://last-mile-delivery-5h3zhy8r1-aryan-mishras-projects-ea501e54.vercel.app
+Hosted static demo: https://last-mile-delivery-2lvp6f2h0-aryan-mishras-projects-ea501e54.vercel.app
 
 The Vercel site is a self-contained frontend demonstration. It includes customer order creation, volumetric/COD pricing, order summaries, and an admin preview using browser `localStorage`. The FastAPI/SQLite backend source is included in this repository but is not hosted. Therefore the hosted demo does not provide shared multi-user data, real authentication, real agent assignment, or live email/SMS delivery.
 
