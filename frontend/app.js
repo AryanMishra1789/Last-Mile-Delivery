@@ -1,8 +1,39 @@
-const API = (window.DELIVERY_API_URL || 'http://localhost:8000').replace(/\/$/, '');
-let token = localStorage.getItem('delivery_token');
-async function api(path, options = {}) { const response = await fetch(`${API}${path}`, { ...options, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) } }); const body = await response.json(); if (!response.ok) throw new Error(body.detail || 'Request failed'); return body; }
-async function login() { try { const result = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email: 'customer@example.com', password: 'customer123' }) }); token = result.access_token; localStorage.setItem('delivery_token', token); document.querySelector('#session').innerHTML = `<span>${result.user.name}</span>`; await loadOrders(); } catch (error) { alert(error.message); } }
+let orders = JSON.parse(localStorage.getItem('last_mile_demo_orders') || '[]');
+let loggedIn = localStorage.getItem('delivery_demo_user') === 'customer';
+
+function login() {
+  loggedIn = true;
+  localStorage.setItem('delivery_demo_user', 'customer');
+  document.querySelector('#session').innerHTML = '<span>Demo Customer</span>';
+  loadOrders();
+}
+
 function showForm() { document.querySelector('#form').classList.toggle('hidden'); }
-async function createOrder() { const [length, breadth, height] = document.querySelector('#dims').value.split('x').map(Number); const data = { pickup_address: document.querySelector('#pickup').value || 'North Hub', drop_address: document.querySelector('#drop').value || 'South Hub', pickup_pincode: document.querySelector('#pp').value, drop_pincode: document.querySelector('#dp').value, length, breadth, height, actual_weight: Number(document.querySelector('#weight').value), order_type: document.querySelector('#kind').value, payment_type: document.querySelector('#payment').value }; try { const quote = await api('/api/orders/preview', { method: 'POST', body: JSON.stringify(data) }); document.querySelector('#quote').textContent = `${quote.pickup_zone} to ${quote.drop_zone} | ${quote.billable_weight}kg billable | Charge: Rs ${quote.charge}`; if (confirm(`Place this delivery for Rs ${quote.charge}?`)) { await api('/api/orders', { method: 'POST', body: JSON.stringify(data) }); await loadOrders(); } } catch (error) { document.querySelector('#quote').textContent = error.message; } }
-async function loadOrders() { if (!token) return; try { const orders = await api('/api/orders'); document.querySelector('#active').textContent = orders.filter(order => !['Delivered', 'Failed'].includes(order.status)).length; document.querySelector('#attention').textContent = orders.filter(order => ['Pending', 'Failed'].includes(order.status)).length; document.querySelector('#orders').innerHTML = orders.length ? orders.map(order => `<article class="order"><div class="order-id">#${String(order.id).padStart(4, '0')}</div><div class="route">${order.pickup_address} -> ${order.drop_address}<small>${order.order_type} / ${order.payment_type}</small></div><div class="agent">${order.agent || 'Awaiting assignment'}</div><div class="status">${order.status}</div><div class="price">Rs ${order.charge}</div></article>`).join('') : '<p>No deliveries yet. Create your first order above.</p>'; } catch (error) { document.querySelector('#orders').innerHTML = `<p>${error.message}. Sign in to load deliveries.</p>`; } }
-if (token) { document.querySelector('#session').innerHTML = '<span>Demo Customer</span>'; loadOrders(); }
+
+function createOrder() {
+  const [length, breadth, height] = document.querySelector('#dims').value.split('x').map(Number);
+  const actualWeight = Number(document.querySelector('#weight').value);
+  const orderType = document.querySelector('#kind').value;
+  const paymentType = document.querySelector('#payment').value;
+  const volumetricWeight = length * breadth * height / 5000;
+  const billableWeight = Math.max(actualWeight, volumetricWeight);
+  const intraZone = document.querySelector('#pp').value.slice(0, 3) === document.querySelector('#dp').value.slice(0, 3);
+  const baseRate = intraZone ? (orderType === 'B2C' ? 50 : 70) : (orderType === 'B2C' ? 120 : 150);
+  const perKg = intraZone ? (orderType === 'B2C' ? 18 : 14) : (orderType === 'B2C' ? 28 : 24);
+  const cod = paymentType === 'COD' ? (orderType === 'B2C' ? 35 : 55) : 0;
+  const charge = Math.round((baseRate + billableWeight * perKg + cod) * 100) / 100;
+  document.querySelector('#quote').textContent = `${intraZone ? 'Intra-zone' : 'Inter-zone'} | ${billableWeight.toFixed(3)}kg billable | Charge: Rs ${charge}`;
+  if (!confirm(`Place this delivery for Rs ${charge}?`)) return;
+  orders.unshift({ id: Date.now(), pickup: document.querySelector('#pickup').value || 'North Hub', drop: document.querySelector('#drop').value || 'South Hub', orderType, paymentType, charge, status: 'Pending' });
+  localStorage.setItem('last_mile_demo_orders', JSON.stringify(orders));
+  loadOrders();
+}
+
+function loadOrders() {
+  if (!loggedIn) return;
+  document.querySelector('#active').textContent = orders.filter(order => !['Delivered', 'Failed'].includes(order.status)).length;
+  document.querySelector('#attention').textContent = orders.filter(order => ['Pending', 'Failed'].includes(order.status)).length;
+  document.querySelector('#orders').innerHTML = orders.length ? orders.map(order => `<article class="order"><div class="order-id">#${String(order.id).slice(-4)}</div><div class="route">${order.pickup} -> ${order.drop}<small>${order.orderType} / ${order.paymentType}</small></div><div class="agent">Demo assignment</div><div class="status">${order.status}</div><div class="price">Rs ${order.charge}</div></article>`).join('') : '<p>No deliveries yet. Create your first demo order above.</p>';
+}
+
+if (loggedIn) { document.querySelector('#session').innerHTML = '<span>Demo Customer</span>'; loadOrders(); }
