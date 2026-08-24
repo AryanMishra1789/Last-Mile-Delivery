@@ -40,7 +40,7 @@ def startup():
 @app.get("/api/health")
 def health(db: Session = Depends(get_db)):
     db.query(User).count()
-    return {"status": "ok", "database": "postgresql"}
+    return {"status": "ok", "database": "sqlite"}
 
 
 @app.post("/api/auth/register")

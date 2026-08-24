@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    database_url: str = "postgresql+psycopg://delivery:delivery@localhost:5432/delivery"
+    database_url: str = "sqlite:///./delivery.db"
     jwt_secret: str = "change-this-in-production"
     access_token_expire_minutes: int = 1440
     mail_from: str = "notifications@example.com"
@@ -20,7 +20,8 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-engine = create_engine(settings.database_url, pool_pre_ping=True)
+connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
+engine = create_engine(settings.database_url, connect_args=connect_args, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
