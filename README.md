@@ -23,6 +23,21 @@ Open http://127.0.0.1:8000. API docs are at http://127.0.0.1:8000/docs. First st
 
 The first Render startup creates the SQLite database tables and demo records. SQLite on a free Render web service uses ephemeral storage, so records can be lost during restart or redeploy. For production persistence, use a paid Render disk or an external managed database. Replace the demo seed flow with a migration step and change the seeded credentials immediately.
 
+## Deploy the backend to Hugging Face Spaces
+
+This repository also supports a no-card Docker Space using SQLite:
+
+1. Create a new Docker Space at https://huggingface.co/new-space.
+2. Choose a Space name, select Docker, and choose the free CPU hardware.
+3. Copy the Space Git URL, then run `git remote add hf https://huggingface.co/spaces/YOUR_USERNAME/YOUR_SPACE_NAME`.
+4. Authenticate locally with `hf auth login` and paste your Hugging Face access token directly into the terminal.
+5. Push the backend with `git push hf main`.
+6. In Space Settings, add `JWT_SECRET` and set `ALLOWED_ORIGINS` to the Vercel URL.
+7. The API URL will be `https://YOUR_USERNAME-YOUR_SPACE_NAME.hf.space`.
+8. Put that URL in `frontend/config.js` and run `vercel --cwd frontend --prod`.
+
+The free Space can sleep when idle, and SQLite data can be lost when the container is rebuilt. This option is intended for a free demonstration deployment.
+
 ## Rate calculation
 
 Each pincode resolves to an admin-managed zone. Volumetric weight is `L x B x H / 5000`; billable weight is the higher of actual and volumetric weight. The engine selects the B2B or B2C route card and adds its COD surcharge only for COD orders. The same calculation powers `/api/orders/preview` and order creation, so the customer sees the exact stored charge before confirming.
