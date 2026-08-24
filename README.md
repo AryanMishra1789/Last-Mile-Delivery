@@ -6,6 +6,8 @@ Hosted application: https://last-mile-delivery-rdesvdypb-aryan-mishras-projects-
 
 The Last-Mile Delivery Tracker is a complete delivery operations platform for customer order placement, intelligent pricing, agent dispatch, delivery lifecycle management, and proactive customer communication. The product workspace showcases customer order creation, volumetric and COD pricing, delivery summaries, and operations monitoring. The repository includes the complete FastAPI service, SQLite data layer, role-based security, assignment engine, immutable tracking model, and email/SMS integrations.
 
+The backend is the authoritative implementation of all business rules. The static frontend includes a clearly marked pricing fallback solely so the hosted customer experience remains interactive while the API is deployed independently; backend deployments use admin-managed zones and rate cards rather than frontend values.
+
 The architecture supports a static frontend deployment and an independently hosted Python API. All implementation details, API contracts, setup steps, and system design decisions are documented below for evaluation and production rollout.
 
 ## Run locally

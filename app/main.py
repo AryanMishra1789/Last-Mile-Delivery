@@ -20,13 +20,15 @@ def seed():
     db = SessionLocal()
     if db.query(User).count():
         db.close(); return
+    # Demo seed credentials only; replace them before any shared deployment.
     admin = User(name="Operations Admin", email="admin@example.com", password_hash=hash_password("admin123"), role=Role.admin.value)
     customer = User(name="Demo Customer", email="customer@example.com", password_hash=hash_password("customer123"), role=Role.customer.value)
     agent = User(name="Aarav Agent", email="agent@example.com", password_hash=hash_password("agent123"), role=Role.agent.value, latitude=28.62, longitude=77.21)
     db.add_all([admin, customer, agent]); db.flush()
-    north = Zone(name="North Hub", pincodes="110001,110002,110003")
-    south = Zone(name="South Hub", pincodes="560001,560002,560003")
+    north = Zone(name="North Hub", pincodes="110001,110002,110003", latitude=28.6139, longitude=77.2090)
+    south = Zone(name="South Hub", pincodes="560001,560002,560003", latitude=12.9716, longitude=77.5946)
     db.add_all([north, south]); db.flush()
+    # Demo seed values only; production pricing is managed through the admin rate-card API.
     for kind in ("B2B", "B2C"):
         db.add_all([RateCard(order_type=kind, from_zone_id=north.id, to_zone_id=north.id, base_rate=50 if kind == "B2C" else 70, per_kg_rate=18 if kind == "B2C" else 14, cod_surcharge=30 if kind == "B2C" else 45), RateCard(order_type=kind, from_zone_id=north.id, to_zone_id=south.id, base_rate=120 if kind == "B2C" else 150, per_kg_rate=28 if kind == "B2C" else 24, cod_surcharge=35 if kind == "B2C" else 55)])
     db.commit(); db.close()

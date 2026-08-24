@@ -17,6 +17,7 @@ function createOrder() {
   const paymentType = document.querySelector('#payment').value;
   const volumetricWeight = length * breadth * height / 5000;
   const billableWeight = Math.max(actualWeight, volumetricWeight);
+  // Static-hosting UX fallback only. The authoritative backend uses admin-managed zones and rate cards in app/services.py.
   const intraZone = document.querySelector('#pp').value.slice(0, 3) === document.querySelector('#dp').value.slice(0, 3);
   const baseRate = intraZone ? (orderType === 'B2C' ? 50 : 70) : (orderType === 'B2C' ? 120 : 150);
   const perKg = intraZone ? (orderType === 'B2C' ? 18 : 14) : (orderType === 'B2C' ? 28 : 24);

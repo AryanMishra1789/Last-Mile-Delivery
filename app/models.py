@@ -40,6 +40,8 @@ class Zone(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), unique=True)
     pincodes: Mapped[str] = mapped_column(Text, default="")
+    latitude: Mapped[float] = mapped_column(Float, default=0)
+    longitude: Mapped[float] = mapped_column(Float, default=0)
 
 
 class RateCard(Base):

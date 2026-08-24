@@ -32,8 +32,10 @@ def nearest_agent(db: Session, pickup_zone_id: int):
     agents = db.query(User).filter(User.role == "agent", User.available.is_(True)).all()
     if not agents:
         return None
-    target = (28.6139 + pickup_zone_id / 100, 77.2090 + pickup_zone_id / 100)
-    return min(agents, key=lambda a: hypot(a.latitude - target[0], a.longitude - target[1]))
+    zone = db.get(Zone, pickup_zone_id)
+    if not zone:
+        return None
+    return min(agents, key=lambda a: hypot(a.latitude - zone.latitude, a.longitude - zone.longitude))
 
 
 def notify(customer: User, order: Order, status: str):
