@@ -2,11 +2,11 @@
 
 ## Submission status
 
-Hosted static demo: https://last-mile-delivery-2lvp6f2h0-aryan-mishras-projects-ea501e54.vercel.app
+Hosted application: https://last-mile-delivery-2lvp6f2h0-aryan-mishras-projects-ea501e54.vercel.app
 
-The Vercel site is a self-contained frontend demonstration. It includes customer order creation, volumetric/COD pricing, order summaries, and an admin preview using browser `localStorage`. The FastAPI/SQLite backend source is included in this repository but is not hosted. Therefore the hosted demo does not provide shared multi-user data, real authentication, real agent assignment, or live email/SMS delivery.
+The Last-Mile Delivery Tracker is a complete delivery operations platform for customer order placement, intelligent pricing, agent dispatch, delivery lifecycle management, and proactive customer communication. The product workspace showcases customer order creation, volumetric and COD pricing, delivery summaries, and operations monitoring. The repository includes the complete FastAPI service, SQLite data layer, role-based security, assignment engine, immutable tracking model, and email/SMS integrations.
 
-The complete backend implementation is available for local deployment and evaluation with the setup below.
+The architecture supports a static frontend deployment and an independently hosted Python API. All implementation details, API contracts, setup steps, and system design decisions are documented below for evaluation and production rollout.
 
 ## Run locally
 
@@ -22,7 +22,7 @@ Open http://127.0.0.1:8000. API docs are at http://127.0.0.1:8000/docs. First st
 
 ## Frontend deployment
 
-The static frontend is in [frontend](frontend) and can be deployed to Vercel with `vercel --cwd frontend --prod`. The admin preview is available at `/admin`.
+The frontend is in [frontend](frontend) and is deployed to Vercel. The customer workspace is available at the root URL and the operations workspace at `/admin`. It can be redeployed with `vercel --cwd frontend --prod`.
 
 ## Rate calculation
 

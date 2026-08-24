@@ -1,1 +1,0 @@
-window.DELIVERY_API_URL = "https://REPLACE-WITH-YOUR-RENDER-SERVICE.onrender.com";
